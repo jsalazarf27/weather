@@ -4,33 +4,37 @@ import 'package:weather/models/city.dart';
 class CitiesPage extends StatelessWidget {
   final List<Cities> cities = List<Cities>.generate(
     20,
-    (i) =>
-        MessageItem(City('Name $i', 'Contry $i', 'Location $i', 'Location $i')),
+    (i) => MessageItem(
+        City('Name $i', 'Country $i', 'Location $i', 'Location $i')),
   );
   CitiesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Cities"),
-        ),
-        body: ListView.builder(
-          itemCount: cities.length,
-          itemBuilder: (context, index) => Card(
-              elevation: 6,
-              margin: const EdgeInsets.all(10),
-              child: ListTile(
-                leading: const CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Color.fromARGB(255, 51, 174, 235),
-                  child: Icon(Icons.cloudy_snowing),
-                ),
-                title: cities[index].buildTitle(context),
-                subtitle: cities[index].buildSubtitle(context),
-                trailing: const Icon(Icons.place),
-              )),
-        ));
+        body: Column(
+      children: [
+        const Image(image: AssetImage('assets/weather.png')),
+        Expanded(
+          child: ListView.builder(
+            itemCount: cities.length,
+            itemBuilder: (context, index) => Card(
+                elevation: 6,
+                margin: const EdgeInsets.all(10),
+                child: ListTile(
+                  leading: const CircleAvatar(
+                    radius: 30,
+                    backgroundColor: Color.fromARGB(255, 51, 174, 235),
+                    child: Icon(Icons.cloudy_snowing),
+                  ),
+                  title: cities[index].buildTitle(context),
+                  subtitle: cities[index].buildSubtitle(context),
+                  trailing: const Icon(Icons.place),
+                )),
+          ),
+        )
+      ],
+    ));
   }
 }
 
