@@ -7,7 +7,7 @@ class WeatherPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cities"),
+        title: const Text("weather"),
       ),
       body: const Center(
         child: Text('Hola Mundo'),

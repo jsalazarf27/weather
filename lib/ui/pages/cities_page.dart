@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:weather/models/city.dart';
+import 'package:weather/ui/widgets/location_button.dart';
 
 class CitiesPage extends StatelessWidget {
   final List<Cities> cities = List<Cities>.generate(
@@ -12,29 +13,33 @@ class CitiesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      children: [
-        const Image(image: AssetImage('assets/weather.png')),
-        Expanded(
-          child: ListView.builder(
-            itemCount: cities.length,
-            itemBuilder: (context, index) => Card(
-                elevation: 6,
-                margin: const EdgeInsets.all(10),
-                child: ListTile(
-                  leading: const CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Color.fromARGB(255, 51, 174, 235),
-                    child: Icon(Icons.cloudy_snowing),
-                  ),
-                  title: cities[index].buildTitle(context),
-                  subtitle: cities[index].buildSubtitle(context),
-                  trailing: const Icon(Icons.place),
-                )),
-          ),
-        )
-      ],
-    ));
+      body: Column(
+        children: [
+          const Image(image: AssetImage('assets/weather.png')),
+          Expanded(
+            child: ListView.builder(
+              itemCount: cities.length,
+              itemBuilder: (context, index) => Card(
+                  elevation: 6,
+                  margin: const EdgeInsets.all(10),
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Color.fromARGB(255, 51, 174, 235),
+                      child: Icon(Icons.cloudy_snowing),
+                    ),
+                    title: cities[index].buildTitle(context),
+                    subtitle: cities[index].buildSubtitle(context),
+                    trailing: const Icon(Icons.location_city),
+                    onTap: () => Navigator.pushNamed(context, 'weather',
+                        arguments: cities[index]),
+                  )),
+            ),
+          )
+        ],
+      ),
+      floatingActionButton: const LocationButton(),
+    );
   }
 }
 
