@@ -11,6 +11,13 @@ class WeatherPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: const BackButton(
+            color: Colors.deepOrangeAccent,
+          )),
       body: Container(
         width: double.infinity,
         decoration: const BoxDecoration(

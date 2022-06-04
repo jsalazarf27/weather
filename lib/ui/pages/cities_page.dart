@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:weather/models/city.dart';
 import 'package:weather/ui/widgets/location_button.dart';
 
+import '../widgets/city_card.dart';
+
 class CitiesPage extends StatelessWidget {
   final List<Cities> cities = List<Cities>.generate(
     20,
@@ -22,18 +24,7 @@ class CitiesPage extends StatelessWidget {
               itemBuilder: (context, index) => Card(
                   elevation: 6,
                   margin: const EdgeInsets.all(10),
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      radius: 30,
-                      backgroundColor: Color.fromARGB(255, 51, 174, 235),
-                      child: Icon(Icons.cloudy_snowing),
-                    ),
-                    title: cities[index].buildTitle(context),
-                    subtitle: cities[index].buildSubtitle(context),
-                    trailing: const Icon(Icons.location_city),
-                    onTap: () => Navigator.pushNamed(context, 'weather',
-                        arguments: cities[index]),
-                  )),
+                  child: CityCard(city: cities[index])),
             ),
           )
         ],
@@ -41,22 +32,4 @@ class CitiesPage extends StatelessWidget {
       floatingActionButton: const LocationButton(),
     );
   }
-}
-
-abstract class Cities {
-  Widget buildTitle(BuildContext context);
-
-  Widget buildSubtitle(BuildContext context);
-}
-
-class MessageItem implements Cities {
-  final City city;
-
-  MessageItem(this.city);
-
-  @override
-  Widget buildTitle(BuildContext context) => Text(city.name);
-
-  @override
-  Widget buildSubtitle(BuildContext context) => Text(city.country);
 }

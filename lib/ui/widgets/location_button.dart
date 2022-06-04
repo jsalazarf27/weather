@@ -9,7 +9,7 @@ class LocationButton extends StatelessWidget {
       onPressed: () {
         Navigator.pushNamed(context, 'weather', arguments: "cities[index]");
       },
-      backgroundColor: Colors.lightGreen,
+      backgroundColor: Colors.deepOrangeAccent,
       child: const Icon(Icons.person_pin_circle),
     );
   }
