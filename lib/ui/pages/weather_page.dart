@@ -40,18 +40,18 @@ class WeatherPage extends StatelessWidget {
                   coord: weatherData.coord!),
               InfoWeather(
                 iconId: weatherData.weather![0].icon,
-                tempeture: weatherData.main!.temp!.toStringAsFixed(0),
+                tempeture: weatherData.main!.temp!,
               ),
               DescriptionWeather(
                 main: weatherData.weather![0].main!,
-                feelLikes: weatherData.main!.feelsLike!.toStringAsFixed(0),
+                feelLikes: weatherData.main!.feelsLike!,
                 descripton: weatherData.weather![0].description!,
               ),
               DetailsWeather(
                   humidity: weatherData.main!.humidity!,
                   visibility: weatherData.visibility!,
-                  maxTemp: weatherData.main!.tempMax!.toStringAsFixed(0),
-                  minTemp: weatherData.main!.tempMin!.toStringAsFixed(0),
+                  maxTemp: weatherData.main!.tempMax!,
+                  minTemp: weatherData.main!.tempMin!,
                   pressure: weatherData.main!.pressure!,
                   speedWind: weatherData.wind!.speed!)
             ],

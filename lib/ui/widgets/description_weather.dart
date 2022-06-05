@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class DescriptionWeather extends StatelessWidget {
   final String main;
-  final int feelLikes;
+  final String feelLikes;
   final String descripton;
 
   const DescriptionWeather(

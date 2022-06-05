@@ -3,7 +3,7 @@ class WeatherData {
   List<Weather>? weather;
   String? base;
   Main? main;
-  int? visibility;
+  String? visibility;
   Wind? wind;
   Clouds? clouds;
   int? dt;
@@ -38,7 +38,7 @@ class WeatherData {
     }
     base = json['base'];
     main = json['main'] != null ? Main.fromJson(json['main']) : null;
-    visibility = json['visibility'];
+    visibility = json['visibility'].round().toString();
     wind = json['wind'] != null ? Wind.fromJson(json['wind']) : null;
     clouds = json['clouds'] != null ? Clouds.fromJson(json['clouds']) : null;
     dt = json['dt'];
@@ -125,12 +125,12 @@ class Weather {
 }
 
 class Main {
-  int? temp;
-  double? feelsLike;
-  double? tempMin;
-  double? tempMax;
-  int? pressure;
-  int? humidity;
+  String? temp;
+  String? feelsLike;
+  String? tempMin;
+  String? tempMax;
+  String? pressure;
+  String? humidity;
 
   Main(
       {this.temp,
@@ -141,12 +141,12 @@ class Main {
       this.humidity});
 
   Main.fromJson(Map<String, dynamic> json) {
-    temp = json['temp'];
-    feelsLike = json['feels_like'];
-    tempMin = json['temp_min'];
-    tempMax = json['temp_max'];
-    pressure = json['pressure'];
-    humidity = json['humidity'];
+    temp = json['temp'].round().toString();
+    feelsLike = json['feels_like'].round().toString();
+    tempMin = json['temp_min'].round().toString();
+    tempMax = json['temp_max'].round().toString();
+    pressure = json['pressure'].round().toString();
+    humidity = json['humidity'].round().toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -162,14 +162,14 @@ class Main {
 }
 
 class Wind {
-  double? speed;
-  int? deg;
+  String? speed;
+  String? deg;
 
   Wind({this.speed, this.deg});
 
   Wind.fromJson(Map<String, dynamic> json) {
-    speed = json['speed'];
-    deg = json['deg'];
+    speed = json['speed'].round().toString();
+    deg = json['deg'].round().toString();
   }
 
   Map<String, dynamic> toJson() {

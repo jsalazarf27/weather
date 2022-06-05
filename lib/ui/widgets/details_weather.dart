@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class DetailsWeather extends StatelessWidget {
-  final int humidity;
-  final int visibility;
-  final int maxTemp;
-  final int minTemp;
-  final int pressure;
-  final double speedWind;
+  final String humidity;
+  final String visibility;
+  final String maxTemp;
+  final String minTemp;
+  final String pressure;
+  final String speedWind;
   const DetailsWeather({
     Key? key,
     required this.humidity,

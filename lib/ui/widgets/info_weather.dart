@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class InfoWeather extends StatelessWidget {
   static const String urlIcons = "http://openweathermap.org/img/wn/";
   final String? iconId;
-  final int tempeture;
+  final String tempeture;
   const InfoWeather({Key? key, this.iconId, required this.tempeture})
       : super(key: key);
 

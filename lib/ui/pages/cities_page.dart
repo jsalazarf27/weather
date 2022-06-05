@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../bloc/weather_bloc.dart';
-import '../../models/city.dart';
+import '../../models/cities.dart';
 import '../../models/weather.dart';
 import '../../repository/weather_repository.dart';
 import '../widgets/city_card.dart';
@@ -18,15 +21,23 @@ class CitiesPage extends StatefulWidget {
 
 class _CitiesPageState extends State<CitiesPage> {
   late WeatherBloc _weatherBloc;
-  final List<City> _cities = List<City>.generate(
-    20,
-    (i) => City('Name $i', 'Country $i', 'Location $i', 'Location $i'),
-  );
+  List<Cities>? _citiesd;
 
   @override
   void initState() {
     super.initState();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+  }
+
+//Todo:pending implement rxdart
+  _asyncMethod() async {
+    var jsonText = await rootBundle.loadString('assets/cities.json');
+    final jsonResult = json.decode(jsonText).cast<Map<String, dynamic>>();
+    setState(() => _citiesd =
+        jsonResult.map<Cities>((json) => Cities.fromJson(json)).toList());
   }
 
   @override
@@ -38,13 +49,14 @@ class _CitiesPageState extends State<CitiesPage> {
             const Image(image: AssetImage('assets/weather.png')),
             Expanded(
               child: ListView.builder(
-                itemCount: _cities.length,
+                itemCount: _citiesd == null ? 0 : _citiesd!.length,
                 itemBuilder: (context, index) => Card(
                     elevation: 6,
                     margin: const EdgeInsets.all(10),
                     child: CityCard(
-                        city: _cities[index],
-                        onTap: () => _weatherBloc.getWeather(city: "London"))),
+                        city: _citiesd![index],
+                        onTap: () => _weatherBloc.getWeather(
+                            city: _citiesd![index].name!))),
               ),
             )
           ],
