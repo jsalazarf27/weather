@@ -47,10 +47,15 @@ class LocationBloc implements BaseBloc {
 
   getCity(double latitude, double longitude) async {
     _loading.sink.add(true);
-    List<Placemark> placemark =
-        await placemarkFromCoordinates(latitude, longitude);
-    _loading.sink.add(false);
-    _city.sink.add(placemark[0].locality!);
+    try {
+      List<Placemark> placemark =
+          await placemarkFromCoordinates(latitude, longitude);
+      _loading.sink.add(false);
+      _city.sink.add(placemark[0].locality!);
+    } on Exception catch (_) {
+      _loading.sink.add(false);
+      _city.sink.addError("City not found");
+    }
   }
 
   @override
