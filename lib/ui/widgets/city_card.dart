@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:weather/models/cities.dart';
+import 'package:weather/models/city.dart';
 
 class CityCard extends StatelessWidget {
-  final Cities city;
-  final Function() onTap;
+  final City city;
+  final Function(String) onTap;
   const CityCard({Key? key, required this.city, required this.onTap})
       : super(key: key);
 
@@ -18,7 +18,7 @@ class CityCard extends StatelessWidget {
       title: Text(city.name!),
       subtitle: Text(city.country!),
       trailing: const Icon(Icons.location_city),
-      onTap: onTap,
+      onTap: () => onTap(city.name!),
     );
   }
 }

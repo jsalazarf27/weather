@@ -29,7 +29,7 @@ class WeatherRepository {
           final data = json.decode(response.body);
           return builder(data);
         case 401:
-        //Todo:implement api errors
+        //TODO:implement api errors
         //throw "Invalid Api key";
         case 404:
         // throw "Not found";

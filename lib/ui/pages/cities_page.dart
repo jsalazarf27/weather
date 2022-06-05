@@ -1,18 +1,23 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:weather/bloc/cities_bloc.dart';
+import 'package:weather/repository/cities_repository.dart';
 
+import '../../bloc/base_bloc.dart';
 import '../../bloc/weather_bloc.dart';
-import '../../models/cities.dart';
+import '../../models/city.dart';
 import '../../models/weather.dart';
 import '../../repository/weather_repository.dart';
-import '../widgets/city_card.dart';
+import '../widgets/cities_list_view.dart';
 import '../widgets/location_button.dart';
+import '../widgets/progress_indicator_stream_builder.dart';
 
 class CitiesPage extends StatefulWidget {
   final WeatherRepository weatherRepository;
-  const CitiesPage({Key? key, required this.weatherRepository})
+  final CitiesRepository citiesRepository;
+  const CitiesPage(
+      {Key? key,
+      required this.weatherRepository,
+      required this.citiesRepository})
       : super(key: key);
 
   @override
@@ -21,23 +26,21 @@ class CitiesPage extends StatefulWidget {
 
 class _CitiesPageState extends State<CitiesPage> {
   late WeatherBloc _weatherBloc;
-  List<Cities>? _citiesd;
+  late CitiesBloc _citiesBloc;
+  late BaseBloc baseBloc;
 
   @override
   void initState() {
     super.initState();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
+    _citiesBloc = CitiesBloc(citiesRepository: widget.citiesRepository);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _asyncMethod();
+      _getCities();
     });
   }
 
-//Todo:pending implement rxdart
-  _asyncMethod() async {
-    var jsonText = await rootBundle.loadString('assets/cities.json');
-    final jsonResult = json.decode(jsonText).cast<Map<String, dynamic>>();
-    setState(() => _citiesd =
-        jsonResult.map<Cities>((json) => Cities.fromJson(json)).toList());
+  _getCities() async {
+    _citiesBloc.getCities();
   }
 
   @override
@@ -47,18 +50,16 @@ class _CitiesPageState extends State<CitiesPage> {
         Column(
           children: [
             const Image(image: AssetImage('assets/weather.png')),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _citiesd == null ? 0 : _citiesd!.length,
-                itemBuilder: (context, index) => Card(
-                    elevation: 6,
-                    margin: const EdgeInsets.all(10),
-                    child: CityCard(
-                        city: _citiesd![index],
-                        onTap: () => _weatherBloc.getWeather(
-                            city: _citiesd![index].name!))),
-              ),
-            )
+            StreamBuilder(
+                stream: _citiesBloc.city,
+                builder: (context, AsyncSnapshot<List<City>> citiesSnapShot) {
+                  if (citiesSnapShot.hasData && citiesSnapShot.data != null) {
+                    return CitiesListView(
+                        cities: citiesSnapShot.data, onTapItem: onTapItem);
+                  } else {
+                    return Container();
+                  }
+                })
           ],
         ),
         StreamBuilder(
@@ -71,32 +72,40 @@ class _CitiesPageState extends State<CitiesPage> {
               }
               return Container();
             }),
-        StreamBuilder<bool>(
-          stream: _weatherBloc.isLoading,
-          builder: (context, loadingSnapshot) {
-            if (loadingSnapshot.hasData && loadingSnapshot.data!) {
-              return Container(
-                height: MediaQuery.of(context).size.height,
-                color: Colors.grey.withOpacity(.7),
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.green,
-                  ),
-                ),
-              );
-            } else {
-              return Container();
-            }
-          },
-        )
+        ProgressIndicatorStreamBuilder(baseBloc: _citiesBloc),
+        ProgressIndicatorStreamBuilder(baseBloc: _weatherBloc)
       ]),
       floatingActionButton: const LocationButton(),
     );
   }
 
+  void onTapItem(String city) {
+    _weatherBloc.getWeather(city: city);
+  }
+
   @override
   void dispose() {
     _weatherBloc.dispose();
+    _citiesBloc.dispose();
     super.dispose();
+  }
+}
+
+class ProgressIndicator extends StatelessWidget {
+  const ProgressIndicator({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      color: Colors.black.withOpacity(.7),
+      child: const Center(
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.deepOrangeAccent,
+        ),
+      ),
+    );
   }
 }

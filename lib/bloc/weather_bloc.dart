@@ -3,7 +3,9 @@ import 'package:rxdart/subjects.dart';
 import 'package:weather/models/weather.dart';
 import 'package:weather/repository/weather_repository.dart';
 
-class WeatherBloc {
+import 'base_bloc.dart';
+
+class WeatherBloc implements BaseBloc {
   final WeatherRepository weatherRepository;
 
   final _weatherFetcher = PublishSubject<WeatherData>();
@@ -12,7 +14,8 @@ class WeatherBloc {
   WeatherBloc({required this.weatherRepository});
 
   Stream<WeatherData> get weather => _weatherFetcher.stream;
-  Stream<bool> get isLoading => _loading.stream;
+  @override
+  get isLoading => _loading.stream;
 
   getWeather({required String city}) async {
     _loading.sink.add(true);
@@ -27,6 +30,7 @@ class WeatherBloc {
     _loading.sink.add(false);
   }
 
+  @override
   void dispose() {
     _weatherFetcher.close();
     _loading.close();

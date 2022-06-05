@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:weather/api/api.dart';
+import 'package:weather/repository/cities_repository.dart';
 import 'package:weather/repository/weather_repository.dart';
 import 'package:weather/ui/pages/cities_page.dart';
 import 'package:weather/ui/pages/weather_page.dart';
@@ -14,12 +15,20 @@ void main() {
         defaultValue: APIKeys.openWeatherAPIKey,
       )),
       client: Client());
-  runApp(MyApp(weatherRepository: weatherRepository));
+  runApp(MyApp(
+    weatherRepository: weatherRepository,
+    citiesRepository: CitiesRepository(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final WeatherRepository weatherRepository;
-  const MyApp({Key? key, required this.weatherRepository}) : super(key: key);
+  final CitiesRepository citiesRepository;
+  const MyApp(
+      {Key? key,
+      required this.weatherRepository,
+      required this.citiesRepository})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +38,7 @@ class MyApp extends StatelessWidget {
       initialRoute: 'cities',
       routes: {
         'cities': (_) => CitiesPage(
+              citiesRepository: citiesRepository,
               weatherRepository: weatherRepository,
             ),
         // 'cities': (_) => CitiesPage(weatherRepository: weatherRepository),
