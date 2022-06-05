@@ -13,12 +13,12 @@ class WeatherRepository {
 
   WeatherRepository({required this.openWeatherAPI, required this.client});
 
-  Future<Weather> getWeather({required String city}) => _getData(
+  Future<WeatherData?> getWeather({required String city}) => _getData(
         uri: openWeatherAPI.weather(city),
-        builder: (data) => Weather.fromJson(data),
+        builder: (data) => WeatherData.fromJson(data),
       );
 
-  Future<T> _getData<T>({
+  Future<T?> _getData<T>({
     required Uri uri,
     required T Function(dynamic data) builder,
   }) async {
