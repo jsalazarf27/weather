@@ -5,9 +5,14 @@ import 'package:weather/repository/weather_repository.dart';
 import 'package:weather/ui/pages/cities_page.dart';
 import 'package:weather/ui/pages/weather_page.dart';
 
+import 'api/api_key_default.dart';
+
 void main() {
   final WeatherRepository weatherRepository = WeatherRepository(
-      openWeatherAPI: OpenWeatherAPI("dcd981f495420920003cabe73cf9e3fe"),
+      openWeatherAPI: OpenWeatherAPI(const String.fromEnvironment(
+        'API_KEY',
+        defaultValue: APIKeys.openWeatherAPIKey,
+      )),
       client: Client());
   runApp(MyApp(weatherRepository: weatherRepository));
 }

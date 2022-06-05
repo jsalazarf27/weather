@@ -58,7 +58,8 @@ class _CitiesPageState extends State<CitiesPage> {
             builder: (context, AsyncSnapshot<WeatherData> weatherSnapshot) {
               if (weatherSnapshot.hasData) {
                 WidgetsBinding.instance.addPostFrameCallback((_) =>
-                    Navigator.pushNamed(context, 'weather', arguments: "city"));
+                    Navigator.pushNamed(context, 'weather',
+                        arguments: weatherSnapshot.data));
               }
               return Container();
             }),
