@@ -5,7 +5,7 @@ import 'package:weather/repository/weather_repository.dart';
 import 'package:weather/ui/pages/cities_page.dart';
 import 'package:weather/ui/pages/weather_page.dart';
 
-import 'api/api_key_default.dart';
+import 'api/api_key.default.dart';
 
 void main() {
   final WeatherRepository weatherRepository = WeatherRepository(

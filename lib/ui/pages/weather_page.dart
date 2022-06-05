@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:weather/models/weather.dart';
 
 import '../widgets/description_weather.dart';
 import '../widgets/details_weather.dart';
@@ -10,6 +11,8 @@ class WeatherPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final WeatherData weatherData =
+        ModalRoute.of(context)!.settings.arguments as WeatherData;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -30,11 +33,27 @@ class WeatherPage extends StatelessWidget {
         child: SafeArea(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              InfoCity(),
-              InfoWeather(),
-              DescriptionWeather(),
-              DetailsWeather()
+            children: [
+              InfoCity(
+                  city: weatherData.name!,
+                  country: weatherData.sys!.country!,
+                  coord: weatherData.coord!),
+              InfoWeather(
+                iconId: weatherData.weather![0].icon,
+                tempeture: weatherData.main!.temp!.toStringAsFixed(0),
+              ),
+              DescriptionWeather(
+                main: weatherData.weather![0].main!,
+                feelLikes: weatherData.main!.feelsLike!.toStringAsFixed(0),
+                descripton: weatherData.weather![0].description!,
+              ),
+              DetailsWeather(
+                  humidity: weatherData.main!.humidity!,
+                  visibility: weatherData.visibility!,
+                  maxTemp: weatherData.main!.tempMax!.toStringAsFixed(0),
+                  minTemp: weatherData.main!.tempMin!.toStringAsFixed(0),
+                  pressure: weatherData.main!.pressure!,
+                  speedWind: weatherData.wind!.speed!)
             ],
           ),
         ),

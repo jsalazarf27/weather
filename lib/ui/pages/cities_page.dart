@@ -18,7 +18,7 @@ class CitiesPage extends StatefulWidget {
 
 class _CitiesPageState extends State<CitiesPage> {
   late WeatherBloc _weatherBloc;
-  final List<City> cities = List<City>.generate(
+  final List<City> _cities = List<City>.generate(
     20,
     (i) => City('Name $i', 'Country $i', 'Location $i', 'Location $i'),
   );
@@ -38,17 +38,13 @@ class _CitiesPageState extends State<CitiesPage> {
             const Image(image: AssetImage('assets/weather.png')),
             Expanded(
               child: ListView.builder(
-                itemCount: cities.length,
+                itemCount: _cities.length,
                 itemBuilder: (context, index) => Card(
                     elevation: 6,
                     margin: const EdgeInsets.all(10),
                     child: CityCard(
-                        city: cities[index],
-                        onTap: () => _weatherBloc.getWeather(city: "London")
-
-                        /*Navigator.pushNamed(context, 'weather',
-                            arguments: "city")*/
-                        )),
+                        city: _cities[index],
+                        onTap: () => _weatherBloc.getWeather(city: "London"))),
               ),
             )
           ],

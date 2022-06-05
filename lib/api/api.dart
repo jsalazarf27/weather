@@ -4,6 +4,7 @@ class OpenWeatherAPI {
   static const String _urlBase = "api.openweathermap.org";
   static const String _path = "/data/2.5/weather";
   static const String _scheme = "https";
+  static const String _units = "metric";
 
   OpenWeatherAPI(this.apiKey);
 
@@ -22,8 +23,6 @@ class OpenWeatherAPI {
     );
   }
 
-  Map<String, dynamic> cityQueryParameters(String city) => {
-        "q": city,
-        "appid": apiKey,
-      };
+  Map<String, dynamic> cityQueryParameters(String city) =>
+      {"q": city, "appid": apiKey, "units": _units};
 }
