@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:weather/bloc/cities_bloc.dart';
+import 'package:weather/bloc/location_bloc.dart';
 import 'package:weather/repository/cities_repository.dart';
 
-import '../../bloc/base_bloc.dart';
 import '../../bloc/weather_bloc.dart';
 import '../../models/city.dart';
 import '../../models/weather.dart';
 import '../../repository/weather_repository.dart';
 import '../widgets/cities_list_view.dart';
+import '../widgets/custom_dialog.dart';
 import '../widgets/location_button.dart';
 import '../widgets/progress_indicator_stream_builder.dart';
 
@@ -21,19 +23,20 @@ class CitiesPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _CitiesPageState createState() => _CitiesPageState();
+  CitiesPageState createState() => CitiesPageState();
 }
 
-class _CitiesPageState extends State<CitiesPage> {
+class CitiesPageState extends State<CitiesPage> {
   late WeatherBloc _weatherBloc;
   late CitiesBloc _citiesBloc;
-  late BaseBloc baseBloc;
+  late LocationBloc _locationBloc;
 
   @override
   void initState() {
     super.initState();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
     _citiesBloc = CitiesBloc(citiesRepository: widget.citiesRepository);
+    _locationBloc = LocationBloc();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _getCities();
     });
@@ -72,11 +75,42 @@ class _CitiesPageState extends State<CitiesPage> {
               }
               return Container();
             }),
+        StreamBuilder(
+            stream: _locationBloc.city,
+            builder: (context, AsyncSnapshot<String> citySnapshot) {
+              if (citySnapshot.hasData && citySnapshot.data != null) {
+                _weatherBloc.getWeather(city: citySnapshot.data!);
+              }
+              return Container();
+            }),
+        StreamBuilder(
+            stream: _locationBloc.position,
+            builder: (context, AsyncSnapshot<Position> positionSnapShot) {
+              if (positionSnapShot.hasData && positionSnapShot.data != null) {
+                _locationBloc.getCity(positionSnapShot.data!.latitude,
+                    positionSnapShot.data!.longitude);
+              } else if (positionSnapShot.hasError) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
+                      context: context,
+                      builder: (contex) {
+                        return CustomDialog(
+                            message: positionSnapShot.error.toString());
+                      });
+                });
+              }
+              return Container();
+            }),
         ProgressIndicatorStreamBuilder(baseBloc: _citiesBloc),
-        ProgressIndicatorStreamBuilder(baseBloc: _weatherBloc)
+        ProgressIndicatorStreamBuilder(baseBloc: _weatherBloc),
+        ProgressIndicatorStreamBuilder(baseBloc: _locationBloc),
       ]),
-      floatingActionButton: const LocationButton(),
+      floatingActionButton: LocationButton(onPressed: onPressedButton),
     );
+  }
+
+  void onPressedButton() {
+    _locationBloc.determinePosition();
   }
 
   void onTapItem(String city) {
@@ -88,24 +122,5 @@ class _CitiesPageState extends State<CitiesPage> {
     _weatherBloc.dispose();
     _citiesBloc.dispose();
     super.dispose();
-  }
-}
-
-class ProgressIndicator extends StatelessWidget {
-  const ProgressIndicator({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      color: Colors.black.withOpacity(.7),
-      child: const Center(
-        child: CircularProgressIndicator(
-          backgroundColor: Colors.deepOrangeAccent,
-        ),
-      ),
-    );
   }
 }
