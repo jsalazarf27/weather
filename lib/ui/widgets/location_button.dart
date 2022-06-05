@@ -7,7 +7,7 @@ class LocationButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      onPressed: () => onPressed,
+      onPressed: onPressed,
       backgroundColor: Colors.deepOrangeAccent,
       child: const Icon(Icons.person_pin_circle),
     );

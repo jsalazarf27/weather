@@ -9,6 +9,7 @@ import '../../models/city.dart';
 import '../../models/weather.dart';
 import '../../repository/weather_repository.dart';
 import '../widgets/cities_list_view.dart';
+import '../widgets/custom_dialog.dart';
 import '../widgets/location_button.dart';
 import '../widgets/progress_indicator_stream_builder.dart';
 
@@ -74,25 +75,42 @@ class CitiesPageState extends State<CitiesPage> {
               }
               return Container();
             }),
+        StreamBuilder(
+            stream: _locationBloc.city,
+            builder: (context, AsyncSnapshot<String> citySnapshot) {
+              if (citySnapshot.hasData && citySnapshot.data != null) {
+                _weatherBloc.getWeather(city: citySnapshot.data!);
+              }
+              return Container();
+            }),
+        StreamBuilder(
+            stream: _locationBloc.position,
+            builder: (context, AsyncSnapshot<Position> positionSnapShot) {
+              if (positionSnapShot.hasData && positionSnapShot.data != null) {
+                _locationBloc.getCity(positionSnapShot.data!.latitude,
+                    positionSnapShot.data!.longitude);
+              } else if (positionSnapShot.hasError) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
+                      context: context,
+                      builder: (contex) {
+                        return CustomDialog(
+                            message: positionSnapShot.error.toString());
+                      });
+                });
+              }
+              return Container();
+            }),
         ProgressIndicatorStreamBuilder(baseBloc: _citiesBloc),
         ProgressIndicatorStreamBuilder(baseBloc: _weatherBloc),
-        ProgressIndicatorStreamBuilder(baseBloc: _locationBloc)
+        ProgressIndicatorStreamBuilder(baseBloc: _locationBloc),
       ]),
       floatingActionButton: LocationButton(onPressed: onPressedButton),
     );
   }
 
   void onPressedButton() {
-    StreamBuilder(
-        stream: _locationBloc.position,
-        builder: (context, AsyncSnapshot<Position> positionSnapShot) {
-          if (positionSnapShot.hasData && positionSnapShot.data != null) {
-            _locationBloc.getAddress(positionSnapShot.data!.latitude,
-                positionSnapShot.data!.longitude);
-            _weatherBloc.getWeather(city: "Medellin");
-          }
-          return Container();
-        });
+    _locationBloc.determinePosition();
   }
 
   void onTapItem(String city) {
