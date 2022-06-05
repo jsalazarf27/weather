@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:weather/models/weather.dart';
 
 class InfoCity extends StatelessWidget {
-  const InfoCity({
-    Key? key,
-  }) : super(key: key);
+  final String city;
+  final String country;
+  final Coord coord;
+  const InfoCity(
+      {Key? key,
+      required this.city,
+      required this.country,
+      required this.coord})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final double latitud = coord.lat!;
+    final double logitud = coord.lon!;
     return Column(
-      children: const [
+      children: [
         Text(
-          "Medellín, CO",
-          style: TextStyle(
+          "$city, $country",
+          style: const TextStyle(
             fontSize: 50,
             fontWeight: FontWeight.bold,
             color: Colors.black54,
           ),
         ),
         Text(
-          "Lat: -75.5636 Long: 6.2518",
+          "Lat: $latitud    Long: $logitud",
           textAlign: TextAlign.end,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             color: Colors.deepOrangeAccent,
           ),

@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 
 class DetailsWeather extends StatelessWidget {
+  final String humidity;
+  final String visibility;
+  final String maxTemp;
+  final String minTemp;
+  final String pressure;
+  final String speedWind;
   const DetailsWeather({
     Key? key,
+    required this.humidity,
+    required this.visibility,
+    required this.maxTemp,
+    required this.minTemp,
+    required this.pressure,
+    required this.speedWind,
   }) : super(key: key);
 
   @override
@@ -10,11 +22,16 @@ class DetailsWeather extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 20),
       child: Column(
-        children: const [
-          DetailRow(leftText: "Humidity: 95%", rightText: "Visibily: 10000"),
-          DetailRow(leftText: "Max temp: 18°C", rightText: "Min temp: 17°C"),
+        children: [
           DetailRow(
-              leftText: "Pressure: 1024hPa", rightText: "Speed wind: 3.6"),
+              leftText: "Humidity: $humidity%",
+              rightText: "Visibily: $visibility"),
+          DetailRow(
+              leftText: "Max temp: $maxTemp°C",
+              rightText: "Min temp: $minTemp°C"),
+          DetailRow(
+              leftText: "Pressure: $pressure hPa",
+              rightText: "Speed wind: $speedWind"),
         ],
       ),
     );

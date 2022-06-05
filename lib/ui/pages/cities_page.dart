@@ -1,35 +1,111 @@
 import 'package:flutter/material.dart';
-import 'package:weather/models/city.dart';
-import 'package:weather/ui/widgets/location_button.dart';
+import 'package:weather/bloc/cities_bloc.dart';
+import 'package:weather/repository/cities_repository.dart';
 
-import '../widgets/city_card.dart';
+import '../../bloc/base_bloc.dart';
+import '../../bloc/weather_bloc.dart';
+import '../../models/city.dart';
+import '../../models/weather.dart';
+import '../../repository/weather_repository.dart';
+import '../widgets/cities_list_view.dart';
+import '../widgets/location_button.dart';
+import '../widgets/progress_indicator_stream_builder.dart';
 
-class CitiesPage extends StatelessWidget {
-  final List<Cities> cities = List<Cities>.generate(
-    20,
-    (i) => MessageItem(
-        City('Name $i', 'Country $i', 'Location $i', 'Location $i')),
-  );
-  CitiesPage({Key? key}) : super(key: key);
+class CitiesPage extends StatefulWidget {
+  final WeatherRepository weatherRepository;
+  final CitiesRepository citiesRepository;
+  const CitiesPage(
+      {Key? key,
+      required this.weatherRepository,
+      required this.citiesRepository})
+      : super(key: key);
+
+  @override
+  _CitiesPageState createState() => _CitiesPageState();
+}
+
+class _CitiesPageState extends State<CitiesPage> {
+  late WeatherBloc _weatherBloc;
+  late CitiesBloc _citiesBloc;
+  late BaseBloc baseBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
+    _citiesBloc = CitiesBloc(citiesRepository: widget.citiesRepository);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getCities();
+    });
+  }
+
+  _getCities() async {
+    _citiesBloc.getCities();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          const Image(image: AssetImage('assets/weather.png')),
-          Expanded(
-            child: ListView.builder(
-              itemCount: cities.length,
-              itemBuilder: (context, index) => Card(
-                  elevation: 6,
-                  margin: const EdgeInsets.all(10),
-                  child: CityCard(city: cities[index])),
-            ),
-          )
-        ],
-      ),
+      body: Stack(children: [
+        Column(
+          children: [
+            const Image(image: AssetImage('assets/weather.png')),
+            StreamBuilder(
+                stream: _citiesBloc.city,
+                builder: (context, AsyncSnapshot<List<City>> citiesSnapShot) {
+                  if (citiesSnapShot.hasData && citiesSnapShot.data != null) {
+                    return CitiesListView(
+                        cities: citiesSnapShot.data, onTapItem: onTapItem);
+                  } else {
+                    return Container();
+                  }
+                })
+          ],
+        ),
+        StreamBuilder(
+            stream: _weatherBloc.weather,
+            builder: (context, AsyncSnapshot<WeatherData> weatherSnapshot) {
+              if (weatherSnapshot.hasData) {
+                WidgetsBinding.instance.addPostFrameCallback((_) =>
+                    Navigator.pushNamed(context, 'weather',
+                        arguments: weatherSnapshot.data));
+              }
+              return Container();
+            }),
+        ProgressIndicatorStreamBuilder(baseBloc: _citiesBloc),
+        ProgressIndicatorStreamBuilder(baseBloc: _weatherBloc)
+      ]),
       floatingActionButton: const LocationButton(),
+    );
+  }
+
+  void onTapItem(String city) {
+    _weatherBloc.getWeather(city: city);
+  }
+
+  @override
+  void dispose() {
+    _weatherBloc.dispose();
+    _citiesBloc.dispose();
+    super.dispose();
+  }
+}
+
+class ProgressIndicator extends StatelessWidget {
+  const ProgressIndicator({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      color: Colors.black.withOpacity(.7),
+      child: const Center(
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.deepOrangeAccent,
+        ),
+      ),
     );
   }
 }
