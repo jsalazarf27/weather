@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:weather/bloc/cities_bloc.dart';
+import 'package:weather/bloc/location_bloc.dart';
 import 'package:weather/repository/cities_repository.dart';
 
-import '../../bloc/base_bloc.dart';
 import '../../bloc/weather_bloc.dart';
 import '../../models/city.dart';
 import '../../models/weather.dart';
@@ -21,19 +22,20 @@ class CitiesPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _CitiesPageState createState() => _CitiesPageState();
+  CitiesPageState createState() => CitiesPageState();
 }
 
-class _CitiesPageState extends State<CitiesPage> {
+class CitiesPageState extends State<CitiesPage> {
   late WeatherBloc _weatherBloc;
   late CitiesBloc _citiesBloc;
-  late BaseBloc baseBloc;
+  late LocationBloc _locationBloc;
 
   @override
   void initState() {
     super.initState();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
     _citiesBloc = CitiesBloc(citiesRepository: widget.citiesRepository);
+    _locationBloc = LocationBloc();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _getCities();
     });
@@ -73,10 +75,24 @@ class _CitiesPageState extends State<CitiesPage> {
               return Container();
             }),
         ProgressIndicatorStreamBuilder(baseBloc: _citiesBloc),
-        ProgressIndicatorStreamBuilder(baseBloc: _weatherBloc)
+        ProgressIndicatorStreamBuilder(baseBloc: _weatherBloc),
+        ProgressIndicatorStreamBuilder(baseBloc: _locationBloc)
       ]),
-      floatingActionButton: const LocationButton(),
+      floatingActionButton: LocationButton(onPressed: onPressedButton),
     );
+  }
+
+  void onPressedButton() {
+    StreamBuilder(
+        stream: _locationBloc.position,
+        builder: (context, AsyncSnapshot<Position> positionSnapShot) {
+          if (positionSnapShot.hasData && positionSnapShot.data != null) {
+            _locationBloc.getAddress(positionSnapShot.data!.latitude,
+                positionSnapShot.data!.longitude);
+            _weatherBloc.getWeather(city: "Medellin");
+          }
+          return Container();
+        });
   }
 
   void onTapItem(String city) {
@@ -88,24 +104,5 @@ class _CitiesPageState extends State<CitiesPage> {
     _weatherBloc.dispose();
     _citiesBloc.dispose();
     super.dispose();
-  }
-}
-
-class ProgressIndicator extends StatelessWidget {
-  const ProgressIndicator({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height,
-      color: Colors.black.withOpacity(.7),
-      child: const Center(
-        child: CircularProgressIndicator(
-          backgroundColor: Colors.deepOrangeAccent,
-        ),
-      ),
-    );
   }
 }
