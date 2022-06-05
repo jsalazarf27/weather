@@ -42,10 +42,6 @@ class CitiesPageState extends State<CitiesPage> {
     });
   }
 
-  _getCities() async {
-    _citiesBloc.getCities();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,10 +54,11 @@ class CitiesPageState extends State<CitiesPage> {
                 builder: (context, AsyncSnapshot<List<City>> citiesSnapShot) {
                   if (citiesSnapShot.hasData && citiesSnapShot.data != null) {
                     return CitiesListView(
-                        cities: citiesSnapShot.data, onTapItem: onTapItem);
-                  } else {
-                    return Container();
+                        cities: citiesSnapShot.data, onTapItem: _onTapItem);
+                  } else if (citiesSnapShot.hasError) {
+                    _showMessage(citiesSnapShot.error.toString());
                   }
+                  return Container();
                 })
           ],
         ),
@@ -72,6 +69,8 @@ class CitiesPageState extends State<CitiesPage> {
                 WidgetsBinding.instance.addPostFrameCallback((_) =>
                     Navigator.pushNamed(context, 'weather',
                         arguments: weatherSnapshot.data));
+              } else if (weatherSnapshot.hasError) {
+                _showMessage(weatherSnapshot.error.toString());
               }
               return Container();
             }),
@@ -80,6 +79,8 @@ class CitiesPageState extends State<CitiesPage> {
             builder: (context, AsyncSnapshot<String> citySnapshot) {
               if (citySnapshot.hasData && citySnapshot.data != null) {
                 _weatherBloc.getWeather(city: citySnapshot.data!);
+              } else if (citySnapshot.hasError) {
+                _showMessage(citySnapshot.error.toString());
               }
               return Container();
             }),
@@ -90,14 +91,7 @@ class CitiesPageState extends State<CitiesPage> {
                 _locationBloc.getCity(positionSnapShot.data!.latitude,
                     positionSnapShot.data!.longitude);
               } else if (positionSnapShot.hasError) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  showDialog(
-                      context: context,
-                      builder: (contex) {
-                        return CustomDialog(
-                            message: positionSnapShot.error.toString());
-                      });
-                });
+                _showMessage(positionSnapShot.error.toString());
               }
               return Container();
             }),
@@ -105,15 +99,29 @@ class CitiesPageState extends State<CitiesPage> {
         ProgressIndicatorStreamBuilder(baseBloc: _weatherBloc),
         ProgressIndicatorStreamBuilder(baseBloc: _locationBloc),
       ]),
-      floatingActionButton: LocationButton(onPressed: onPressedButton),
+      floatingActionButton: LocationButton(onPressed: _onPressedButton),
     );
   }
 
-  void onPressedButton() {
+  _getCities() async {
+    _citiesBloc.getCities();
+  }
+
+  _showMessage(String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog(
+          context: context,
+          builder: (contex) {
+            return CustomDialog(message: message);
+          });
+    });
+  }
+
+  _onPressedButton() {
     _locationBloc.determinePosition();
   }
 
-  void onTapItem(String city) {
+  _onTapItem(String city) {
     _weatherBloc.getWeather(city: city);
   }
 

@@ -19,9 +19,14 @@ class CitiesBloc implements BaseBloc {
 
   getCities() async {
     _loading.sink.add(true);
-    List<City>? cities = await citiesRepository.getCities();
-    _citiesFetcher.sink.add(cities);
-    _loading.sink.add(false);
+    try {
+      List<City>? cities = await citiesRepository.getCities();
+      _citiesFetcher.sink.add(cities);
+      _loading.sink.add(false);
+    } on Exception catch (error) {
+      _loading.sink.add(false);
+      _citiesFetcher.sink.addError(error);
+    }
   }
 
   @override

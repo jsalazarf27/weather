@@ -29,16 +29,14 @@ class WeatherRepository {
           final data = json.decode(response.body);
           return builder(data);
         case 401:
-        //TODO:implement api errors
-        //throw "Invalid Api key";
+          throw Exception("Invalid Api key");
         case 404:
-        // throw "Not found";
+          throw Exception("Open weather not found");
         default:
-          return null;
-        //throw "Error api";
+          throw Exception("Error Api");
       }
     } on SocketException catch (_) {
-      throw "No internet conection";
+      throw Exception("No internet connection");
     }
   }
 }
