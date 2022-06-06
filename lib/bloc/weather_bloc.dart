@@ -28,9 +28,9 @@ class WeatherBloc implements BaseBloc {
         _weatherFetcher.sink.addError("City not found");
       }
       _loading.sink.add(false);
-    } on Exception catch (error) {
+    } on LoadWeatherException catch (error) {
       _loading.sink.add(false);
-      _weatherFetcher.sink.addError(error);
+      _weatherFetcher.sink.addError(error.message);
     }
   }
 
