@@ -8,8 +8,7 @@ import 'package:http/http.dart' as http;
 import '../models/weather.dart';
 
 class LoadWeatherException implements Exception {
-  final message;
-
+  final String message;
   LoadWeatherException(this.message);
 }
 
