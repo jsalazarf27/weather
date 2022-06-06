@@ -1,3 +1,5 @@
+import 'package:weather/models/city.dart';
+
 final jsonResponseWeather = {
   "coord": {"lon": -75.5636, "lat": 6.2518},
   "weather": [
@@ -33,6 +35,17 @@ final jsonResponseWeather = {
   "name": "Medellín",
   "cod": 200
 };
+
+final listCities = [
+  City(city: "Medellin", country: "Colombia"),
+  City(city: "Itagui", country: "Colombia"),
+  City(city: "Bogota", country: "Colombia"),
+  City(city: "Barranquilla", country: "Colombia"),
+  City(city: "Pereira", country: "Colombia"),
+  City(city: "Bucaramanga", country: "Colombia"),
+  City(city: "Pasto", country: "Colombia"),
+  City(city: "Envigado", country: "Colombia")
+];
 
 final jsonWeather = {
   "weather": [
