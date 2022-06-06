@@ -22,6 +22,7 @@ class LocationBloc implements BaseBloc {
     if (!serviceEnabled) {
       _positionFetcher.sink.addError('Location services are disabled.');
       _loading.sink.add(false);
+      return;
     }
 
     permission = await Geolocator.checkPermission();
@@ -37,7 +38,7 @@ class LocationBloc implements BaseBloc {
     if (permission == LocationPermission.deniedForever) {
       _loading.sink.add(false);
       _positionFetcher.sink.addError(
-          'Location permissions are permanently denied, we cannot request permissions.');
+          'Location permissions are permanently denied, we can not request permissions.');
       return;
     }
     Position position = await Geolocator.getCurrentPosition();
