@@ -1,18 +1,27 @@
+import 'dart:convert';
+
+List<City> cityFromJson(String str) =>
+    List<City>.from(json.decode(str).map((x) => City.fromJson(x)));
+
+String cityToJson(List<City> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+
 class City {
-  String? name;
+  City({
+    this.city,
+    this.country,
+  });
+
+  String? city;
   String? country;
 
-  City({this.name, this.country});
+  factory City.fromJson(Map<String, dynamic> json) => City(
+        city: json["city"],
+        country: json["country"],
+      );
 
-  City.fromJson(Map<String, dynamic> json) {
-    name = json['city'];
-    country = json['country'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['city'] = name;
-    data['country'] = country;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+        "city": city,
+        "country": country,
+      };
 }

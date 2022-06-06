@@ -7,6 +7,12 @@ import 'package:http/http.dart' as http;
 
 import '../models/weather.dart';
 
+class LoadWeatherException implements Exception {
+  final message;
+
+  LoadWeatherException(this.message);
+}
+
 class WeatherRepository {
   final OpenWeatherAPI openWeatherAPI;
   final http.Client client;
@@ -29,14 +35,14 @@ class WeatherRepository {
           final data = json.decode(response.body);
           return builder(data);
         case 401:
-          throw Exception("Invalid Api key");
+          throw LoadWeatherException("Invalid Api key");
         case 404:
-          throw Exception("Open weather not found");
+          throw LoadWeatherException("Open weather not found");
         default:
-          throw Exception("Error Api");
+          throw LoadWeatherException("Error Api");
       }
     } on SocketException catch (_) {
-      throw Exception("No internet connection");
+      throw LoadWeatherException("No internet connection");
     }
   }
 }

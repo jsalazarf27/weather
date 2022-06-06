@@ -15,10 +15,10 @@ class CityCard extends StatelessWidget {
         backgroundColor: Colors.grey,
         child: Icon(Icons.cloudy_snowing),
       ),
-      title: Text(city.name!),
+      title: Text(city.city!),
       subtitle: Text(city.country!),
       trailing: const Icon(Icons.location_city),
-      onTap: () => onTap(city.name!),
+      onTap: () => onTap(city.city!),
     );
   }
 }
