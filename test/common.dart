@@ -34,6 +34,16 @@ final jsonResponseWeather = {
   "cod": 200
 };
 
+final jsonWeather = {
+  "weather": [
+    {
+      "id": 211,
+      "main": "Thunderstorm",
+      "description": "thunderstorm",
+    }
+  ]
+};
+
 final jsonCities = [
   {"city": "Medellin", "country": "Colombia"},
   {"city": "Itagui", "country": "Colombia"},

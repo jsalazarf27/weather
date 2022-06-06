@@ -39,7 +39,7 @@ class WeatherPage extends StatelessWidget {
                   country: weatherData.sys!.country!,
                   coord: weatherData.coord!),
               InfoWeather(
-                iconId: weatherData.weather![0].icon,
+                imageWeather: weatherData.weather![0].imageWeather,
                 tempeture: weatherData.main!.temp!.round().toString(),
               ),
               DescriptionWeather(

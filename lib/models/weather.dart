@@ -190,7 +190,9 @@ class Weather {
   String? main;
   String? description;
   String? icon;
-
+  String get imageWeather => icon == null
+      ? 'http://openweathermap.org/img/wn/01d@2x.png'
+      : 'http://openweathermap.org/img/wn/$icon@2x.png';
   factory Weather.fromJson(Map<String, dynamic> json) => Weather(
         id: json["id"],
         main: json["main"],
